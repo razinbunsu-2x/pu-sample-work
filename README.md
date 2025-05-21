@@ -15,3 +15,20 @@ Implemented **ACF Flexible Content** to build modular and reusable content block
 - Remove content without touching code
 
 The content blocks are integrated into a custom page template and can be reused across multiple pages, making content management more efficient and consistent.
+
+---
+
+### Admin Screenshots
+
+**Flexible Content in Admin (ACF):**  
+![ACF Flexible Content](./screenshots/pu-admin-acf.png)
+
+**Homepage Editor View:**  
+![Homepage ACF Layout](./screenshots/pu-admin-home.png)
+
+---
+
+### Frontend Screenshot
+
+**Live Homepage Output:**  
+![Homepage Screenshot](./screenshots/pu-homepage.png)
