@@ -1,0 +1,123 @@
+<?php
+
+use helpers\ACFHelper;
+
+// Content Fields
+$section_title       = get_sub_field('section_title');
+$section_description = get_sub_field('section_description');
+$progress_circle     = get_sub_field('progress_circle');
+$section_footnote    = get_sub_field('section_footnote');
+
+// Styling Fields
+$custom_class          = sanitize_text_field(get_sub_field('custom_class'));
+$padding               = get_sub_field('section_padding');
+$padding_top           = ACFHelper::get_padding_value($padding, 'padding_top', 120, true);
+$padding_bottom        = ACFHelper::get_padding_value($padding, 'padding_bottom', 80, true);
+$padding_top_mobile    = ACFHelper::get_padding_value($padding, 'mobile_padding_top', 120, true);
+$padding_bottom_mobile = ACFHelper::get_padding_value($padding, 'mobile_padding_bottom', 80, true);
+$background_color      = sanitize_hex_color(get_sub_field('section_background_color')) ?: '#ffffff';
+
+// Define which tags you want to allow
+$allowed_tags = [
+  'br' => [],
+  'strong' => [],
+  'em'     => []
+];
+?>
+
+<section class="progress-circle-section<?php if ($custom_class): ?> <?php echo $custom_class; ?><?php endif; ?>"
+  style="
+    --padding-top: <?php echo esc_attr($padding_top); ?>px;
+    --padding-bottom: <?php echo esc_attr($padding_bottom); ?>px;
+    --padding-top-mobile: <?php echo esc_attr($padding_top_mobile); ?>px;
+    --padding-bottom-mobile: <?php echo esc_attr($padding_bottom_mobile); ?>px;
+    --background-color: <?php echo esc_attr($background_color); ?>;">
+  <div class=" container">
+
+    <?php if (!empty($section_title) || !empty($section_description)): ?>
+      <header class="section-header row justify-content-center text-center">
+        <div class="col-12">
+          <?php if ($section_title): ?>
+            <h3 class="section-title"><?php echo wp_kses($section_title, $allowed_tags); ?></h3>
+          <?php endif; ?>
+          <?php if ($section_description): ?>
+            <p><?php echo wp_kses_post($section_description); ?></p>
+          <?php endif; ?>
+        </div>
+      </header>
+    <?php endif; ?>
+
+    <?php if ($progress_circle) : ?>
+      <div class="row progress-circle-container">
+        <?php foreach ($progress_circle as $circle) :
+          $decimal_value = floatval(trim($circle['progress_value'])) / 100;
+        ?>
+          <div class="col-6 col-md-3">
+            <div class="progress-circle" data-value="<?php echo esc_attr($decimal_value); ?>" data-color="<?php echo esc_attr($circle['progress_color']); ?>" data-text="<?php echo esc_attr($circle['progress_description']); ?>"></div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($section_footnote): ?>
+      <div class="footnote-container d-flex justify-content-center">
+        <div class="footnote text-center">
+          <?php echo wp_kses_post($section_footnote); ?>
+        </div>
+      </div>
+    <?php endif; ?>
+
+  </div>
+</section>
+<script>
+  function createProgressBar(container, value, color, additionalText) {
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("fill", color);
+    dot.setAttribute("r", 2); // Radius 2px for 10px diameter
+
+    const progressBar = new ProgressBar.Circle(container, {
+      color: color,
+      trailColor: '#C4C4C4',
+      strokeWidth: 1.5,
+      trailWidth: 0.5,
+      duration: 2000,
+      easing: 'easeInOut',
+      text: {
+        autoStyleContainer: false
+      },
+      step: function(state, circle) {
+        const percentage = Math.round(circle.value() * 100);
+        // Constructing the text with <sup> tag for superscript
+        circle.setText(`<span class="text-percentage">${percentage}<sup>%</sup></span> <span class="text-description">${additionalText}</span>`);
+
+        // Update dot position
+        const progressPath = circle.path;
+        const length = progressPath.getTotalLength();
+        const point = progressPath.getPointAtLength(length * circle.value());
+
+        dot.setAttribute("cx", point.x);
+        dot.setAttribute("cy", point.y);
+      }
+    });
+
+    // Append the dot to the progress bar's SVG
+    progressBar.path.parentNode.appendChild(dot);
+
+    // Start the progress bar animation
+    progressBar.animate(value);
+
+  }
+  (function($) {
+    $(document).ready(function() {
+      // Select each progress-circle element and extract data attributes
+      document.querySelectorAll('.progress-circle').forEach(container => {
+        const value = parseFloat(container.getAttribute('data-value'));
+        const color = container.getAttribute('data-color');
+        const text = container.getAttribute('data-text');
+
+        // Initialize the progress bar for each container
+        createProgressBar(container, value, color, text);
+      });
+    });
+  })(jQuery);
+</script>
