@@ -1,8 +1,17 @@
 # PU Sample Work
 
 **Client:** ProcessUnity  
-**Live Link:** [https://www.processunity.com/ 
-**Tech Stack:** WordPress, Advanced Custom Fields (ACF)  
+**Live Link:** [https://www.processunity.com](https://www.processunity.com)  
+**Tech Stack:** PHP, WordPress, Advanced Custom Fields (ACF)
 
-**Description:**  
-Used ACF Flexible Content to create easy-to-manage content blocks. Editors can add, rearrange, or remove sections without any coding. The blocks can be reused on different pages using a custom page template.
+---
+
+### Description
+
+Implemented **ACF Flexible Content** to build modular and reusable content blocks. This setup allows editors to:
+
+- Add new sections
+- Reorder existing blocks
+- Remove content without touching code
+
+The content blocks are integrated into a custom page template and can be reused across multiple pages, making content management more efficient and consistent.
